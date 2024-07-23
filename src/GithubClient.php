@@ -60,7 +60,7 @@ class GithubClient
         string $direction = 'asc',
         int $perPage = 30,
         int $page = 1
-    ): ?Collection {
+    ): ?array {
         $response = Http::withHeaders([
             'Accept' => 'application/vnd.github.v3+json',
             'Authorization' => 'Bearer ' . $this->token,
@@ -127,7 +127,7 @@ class GithubClient
         ?string $until = null,
         int $perPage = 30,
         int $page = 1
-    ): ?Collection {
+    ): ?array {
         $params = array_filter([
             'sha' => $sha,
             'path' => $path,
@@ -149,7 +149,6 @@ class GithubClient
         }
 
         return $response->json();
-
     }
 
     /**
@@ -168,7 +167,7 @@ class GithubClient
         string $state = 'open',
         int $perPage = 30,
         int $page = 1
-    ): ?Collection {
+    ): ?array {
         $response = Http::withHeaders([
             'Accept' => 'application/vnd.github.v3+json',
             'Authorization' => 'Bearer ' . $this->token,

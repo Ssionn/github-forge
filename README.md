@@ -9,8 +9,7 @@ A Laravel package to integrate GitHub API functionality.
    composer require ssionn/github-forge-laravel
    ```
 
-3. (If using Laravel < 5.5) Register the Service Provider:
-   Add the following line to the `providers` array in `config/app.php`:
+3. Add the following line to the `providers` array in `config/app.php`:
    ```php
    'providers' => [
        // Other Service Providers

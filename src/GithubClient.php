@@ -80,7 +80,7 @@ class GithubClient
             return null;
         }
 
-        return Cache::remember('github_repos_by_' . $username, 3600, function ($response) {
+        return Cache::remember('github_repos_by_' . $username, 3600, function () use ($response) {
             return $response->json();
         });
     }
@@ -105,7 +105,7 @@ class GithubClient
             return null;
         }
 
-        return Cache::remember('github_repo_' . $repo, 3600, function ($response) {
+        return Cache::remember('github_repo_' . $repo, 3600, function () use ($response) {
             return $response->json();
         });
     }
@@ -155,7 +155,7 @@ class GithubClient
             return null;
         }
 
-        return Cache::remember('github_repo_' . $repo . '_commits', 3600, function ($response) {
+        return Cache::remember('github_repo_' . $repo . '_commits', 3600, function () use ($response) {
             return $response->json();
         });
     }
@@ -191,7 +191,7 @@ class GithubClient
             return null;
         }
 
-        return Cache::remember('github_repo_' . $repo . '_issues', 3600, function ($response) {
+        return Cache::remember('github_repo_' . $repo . '_issues', 3600, function () use ($response) {
             return $response->json();
         });
     }

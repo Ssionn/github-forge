@@ -159,6 +159,29 @@ class GithubClient
             return $response->json();
         });
     }
+    /**
+     * Get all contributors from repository
+     *
+     * @param string $owner The owner of the repository
+     * @param string $repo The name of the repository 
+     *
+     */
+    public function getContributors(string $owner, string $repo): ?array
+    {
+        $response = Http::withHeaders([
+            'Accept' => 'application/vnd.github.v3+json',
+            'Authorization' => 'Bearer ' . $this->token,
+            'X-GitHub-Api-Version' => '2022-11-28',
+        ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
+
+        if ($response->failed()) {
+            return null;
+        }
+
+        return Cache::remember('github_repo_' . $repo . '_contributors', 3600, function () use ($response) {
+            return $response->json();
+        });
+    }
 
     /**
      * Get issues from a repository.

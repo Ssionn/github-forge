@@ -5,6 +5,7 @@ namespace Ssionn\GithubForgeLaravel;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * GitHub API Client for Laravel applications.
@@ -38,7 +39,9 @@ class GithubClient
             return null;
         }
 
-        return $response->json();
+        return Cache::remember('github_user', 3600, function ($response) {
+            return $response->json();
+        });
     }
 
     /**
@@ -77,7 +80,9 @@ class GithubClient
             return null;
         }
 
-        return $response->json();
+        return Cache::remember('github_repos_by_' . $username, 3600, function ($response) {
+            return $response->json();
+        });
     }
 
     /**
@@ -100,7 +105,9 @@ class GithubClient
             return null;
         }
 
-        return $response->json();
+        return Cache::remember('github_repo_' . $repo, 3600, function ($response) {
+            return $response->json();
+        });
     }
 
     /**
@@ -125,7 +132,7 @@ class GithubClient
         ?string $author = null,
         ?string $since = null,
         ?string $until = null,
-        int $perPage = 30,
+        int $perPage = 50,
         int $page = 1
     ): ?array {
         $params = array_filter([
@@ -148,7 +155,9 @@ class GithubClient
             return null;
         }
 
-        return $response->json();
+        return Cache::remember('github_repo_' . $repo . '_commits', 3600, function ($response) {
+            return $response->json();
+        });
     }
 
     /**
@@ -182,6 +191,8 @@ class GithubClient
             return null;
         }
 
-        return $response->json();
+        return Cache::remember('github_repo_' . $repo . '_issues', 3600, function ($response) {
+            return $response->json();
+        });
     }
 }

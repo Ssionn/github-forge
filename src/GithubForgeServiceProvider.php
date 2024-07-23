@@ -8,19 +8,18 @@ class GithubForgeServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/github-forge.php', 'github-forge');
-
-        $this->app->singleton('github-forge', function ($app) {
-            return new GithubClient();
-        });
+        $this->app->singleton(GithubClient::class);
     }
 
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/github-forge.php' => config_path('github-forge.php'),
-            ], 'config');
-        }
+        $this->publishes([
+            __DIR__.'/../config/github-forge.php' => config_path('github-forge.php'),
+        ], 'config');
+    }
+
+    public function provides(): array
+    {
+        return [GithubClient::class];
     }
 }

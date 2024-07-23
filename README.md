@@ -54,11 +54,9 @@ The facade methods are as follows:
 - `GithubForge::getUser(string $username)`
 - `GithubForge::getRepositories(string $username, string $type = 'all', string $sort = 'full_name', string $direction = 'asc', int $perPage = 30, int $page = 1)`
 - `GithubForge::getRepository(string $owner, string $repo)`
+- `GithubForge::getContributors(string $owner, string $repo)`
 - `GithubForge::getCommitsFromRepository(string $owner, string $repo, ?string $sha = null, ?string $path = null, ?string $author = null, ?string $since = null, ?string $until = null, int $perPage = 30, int $page = 1)`
 - `GithubForge::getIssues(string $owner, string $repo, string $state = 'open', int $perPage = 30, int $page = 1)`
-- `GithubForge::fetchAll(string $endpoint, array $params = [])`
-- `GithubForge::getAllRepositories(string $username, array $params = [])`
-- `GithubForge::getPaginatedRepositories(string $username, int $perPage = 30, int $page = 1, array $params = [])`
 
 Choose the method that best suits your needs and enjoy a streamlined integration with GitHub's API.
 

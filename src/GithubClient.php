@@ -15,6 +15,9 @@ class GithubClient
     private $token;
     private $baseUrl = 'https://api.github.com';
 
+    const APPLICATIONTYPE = 'application/vnd.github.v3+json';
+    CONST APIVERSION = '2022-11-28';
+
     public function __construct()
     {
         $this->token = config('github-forge.token');
@@ -29,17 +32,17 @@ class GithubClient
      */
     public function getUser(string $username): ?array
     {
-        $response = Http::withHeaders([
-            'Accept' => 'application/vnd.github.v3+json',
-            'Authorization' => 'Bearer ' . $this->token,
-            'X-GitHub-Api-Version' => '2022-11-28',
-        ])->get("{$this->baseUrl}/users/{$username}");
+        return Cache::remember('github_user_' . $username, 3600, function () use ($username) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/users/{$username}");
 
-        if ($response->failed()) {
-            return null;
-        }
+            if ($response->failed()) {
+                return null;
+            }
 
-        return Cache::remember('github_user', 3600, function ($response) {
             return $response->json();
         });
     }
@@ -64,23 +67,23 @@ class GithubClient
         int $perPage = 30,
         int $page = 1
     ): ?array {
-        $response = Http::withHeaders([
-            'Accept' => 'application/vnd.github.v3+json',
-            'Authorization' => 'Bearer ' . $this->token,
-            'X-GitHub-Api-Version' => '2022-11-28',
-        ])->get("{$this->baseUrl}/users/{$username}/repos", [
-            'type' => $type,
-            'sort' => $sort,
-            'direction' => $direction,
-            'per_page' => $perPage,
-            'page' => $page,
-        ]);
+        return Cache::remember("github_repos_by_{$username}_{$type}_{$sort}_{$direction}_{$perPage}_{$page}", 3600, function () use ($username, $type, $sort, $direction, $perPage, $page) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/users/{$username}/repos", [
+                'type' => $type,
+                'sort' => $sort,
+                'direction' => $direction,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-        if ($response->failed()) {
-            return null;
-        }
+            if ($response->failed()) {
+                return null;
+            }
 
-        return Cache::remember('github_repos_by_' . $username, 3600, function () use ($response) {
             return $response->json();
         });
     }
@@ -95,17 +98,17 @@ class GithubClient
      */
     public function getRepository(string $owner, string $repo): ?array
     {
-        $response = Http::withHeaders([
-            'Accept' => 'application/vnd.github.v3+json',
-            'Authorization' => 'Bearer ' . $this->token,
-            'X-GitHub-Api-Version' => '2022-11-28',
-        ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}");
+        return Cache::remember("github_repo_{$owner}_{$repo}", 3600, function () use ($owner, $repo) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}");
 
-        if ($response->failed()) {
-            return null;
-        }
+            if ($response->failed()) {
+                return null;
+            }
 
-        return Cache::remember('github_repo_' . $repo, 3600, function () use ($response) {
             return $response->json();
         });
     }
@@ -135,50 +138,51 @@ class GithubClient
         int $perPage = 50,
         int $page = 1
     ): ?array {
-        $params = array_filter([
-            'sha' => $sha,
-            'path' => $path,
-            'author' => $author,
-            'since' => $since,
-            'until' => $until,
-            'per_page' => $perPage,
-            'page' => $page,
-        ]);
+        return Cache::remember("github_repo_{$owner}_{$repo}_commits_{$sha}_{$path}_{$author}_{$since}_{$until}_{$perPage}_{$page}", 3600, function () use ($owner, $repo, $sha, $path, $author, $since, $until, $perPage, $page) {
+            $params = array_filter([
+                'sha' => $sha,
+                'path' => $path,
+                'author' => $author,
+                'since' => $since,
+                'until' => $until,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-        $response = Http::withHeaders([
-            'Accept' => 'application/vnd.github.v3+json',
-            'Authorization' => 'Bearer ' . $this->token,
-            'X-GitHub-Api-Version' => '2022-11-28',
-        ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/commits", $params);
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/commits", $params);
 
-        if ($response->failed()) {
-            return null;
-        }
+            if ($response->failed()) {
+                return null;
+            }
 
-        return Cache::remember('github_repo_' . $repo . '_commits', 3600, function () use ($response) {
             return $response->json();
         });
     }
+
     /**
      * Get all contributors from repository
      *
      * @param string $owner The owner of the repository
-     * @param string $repo The name of the repository 
+     * @param string $repo The name of the repository
      *
      */
     public function getContributors(string $owner, string $repo): ?array
     {
-        $response = Http::withHeaders([
-            'Accept' => 'application/vnd.github.v3+json',
-            'Authorization' => 'Bearer ' . $this->token,
-            'X-GitHub-Api-Version' => '2022-11-28',
-        ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
+        return Cache::remember("github_repo_{$owner}_{$repo}_contributors", 3600, function () use ($owner, $repo) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
 
-        if ($response->failed()) {
-            return null;
-        }
+            if ($response->failed()) {
+                return null;
+            }
 
-        return Cache::remember('github_repo_' . $repo . '_contributors', 3600, function () use ($response) {
             return $response->json();
         });
     }
@@ -200,21 +204,21 @@ class GithubClient
         int $perPage = 30,
         int $page = 1
     ): ?array {
-        $response = Http::withHeaders([
-            'Accept' => 'application/vnd.github.v3+json',
-            'Authorization' => 'Bearer ' . $this->token,
-            'X-GitHub-Api-Version' => '2022-11-28',
-        ])->get("$this->baseUrl}/repos/{$owner}/{$repo}/issues", [
-            'state' => $state,
-            'per_page' => $perPage,
-            'page' => $page,
-        ]);
+        return Cache::remember("github_repo_{$owner}_{$repo}_issues_{$state}_{$perPage}_{$page}", 3600, function () use ($owner, $repo, $state, $perPage, $page) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/issues", [
+                'state' => $state,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-        if ($response->failed()) {
-            return null;
-        }
+            if ($response->failed()) {
+                return null;
+            }
 
-        return Cache::remember('github_repo_' . $repo . '_issues', 3600, function () use ($response) {
             return $response->json();
         });
     }

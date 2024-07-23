@@ -9,7 +9,8 @@ A Laravel package to integrate GitHub API functionality.
    composer require ssionn/github-forge-laravel
    ```
 
-3. Add the following line to the `providers` array in `config/app.php`:
+3. (If you are using Laravel 5.5 or less) Register the Service Provider:
+   Add the following line to the `providers` array in `config/app.php`:
    ```php
    'providers' => [
        // Other Service Providers
@@ -18,12 +19,12 @@ A Laravel package to integrate GitHub API functionality.
    ],
    ```
 
-4. Publish the configuration file:
+5. Publish the configuration file:
    ```sh
-   php artisan vendor:publish --provider="Ssionn\GithubForgeLaravel\GitHubForgeServiceProvider" --tag=config
+   php artisan vendor:publish --provider="Ssionn\GithubForgeLaravel\GithubForgeServiceProvider" --tag=config
    ```
 
-5. Set your GitHub API token in the configuration file `config/github-forge.php`:
+6. Set your GitHub API token in the configuration file `config/github-forge.php`:
    ```php
    return [
        'token' => env('GITHUB_API_TOKEN', 'your-github-token-here'),

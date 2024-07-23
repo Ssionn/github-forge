@@ -16,7 +16,7 @@ class GithubClient
     private $baseUrl = 'https://api.github.com';
 
     const APPLICATIONTYPE = 'application/vnd.github.v3+json';
-    CONST APIVERSION = '2022-11-28';
+    const APIVERSION = '2022-11-28';
 
     public function __construct()
     {

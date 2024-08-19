@@ -193,7 +193,7 @@ class GithubClient
      * @param string $owner The owner of the repository
      * @param string $repo The name of the repository
      * @param string $state Indicates the state of the issues to return. Can be either open, closed, or all. Default: open
-     * @param int $perPage Number of results per page. Default: 30
+     * @param int $per_page Number of results per page. Default: 30
      * @param int $page Page number of the results to fetch. Default: 1
      * @return Collection|null Collection of issues
      */
@@ -212,6 +212,38 @@ class GithubClient
             ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/issues", [
                 'state' => $state,
                 'per_page' => $perPage,
+                'page' => $page,
+            ]);
+
+            if ($response->failed()) {
+                return null;
+            }
+
+            return $response->json();
+        });
+    }
+
+    /**
+    * Get pull requests from a repository
+    *
+    * @param string $owner The owner of the repository
+    * @param string $repo The name of the repository
+    * @param int $per_page Number of results per page. Default: 15
+    * @param int $page Page number of the results to fetch. Default: 1
+    */
+    public function getPullRequests(
+        string $repo,
+        string $owner,
+        int $per_page = 15,
+        int $page = 1,
+    ): ?array {
+        return Cache::remember("github_pull_request_{$owner}_{$repo}", 3600, function () use ($repo, $owner, $per_page, $page) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/pulls", [
+                'per_page' => $per_page,
                 'page' => $page,
             ]);
 

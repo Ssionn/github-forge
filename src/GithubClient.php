@@ -197,37 +197,21 @@ class GithubClient
     public function getContributors(
         string $owner,
         string $repo,
-        int $per_page = 25,
-        int $page = 1
     ): ?array
     {
-        $allContributors = [];
+        return Cache::remember("github_repo_{$owner}_{$repo}_contributors", 3600, function () use ($owner, $repo) {
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
 
-        do {
-            $contributors = Cache::remember("github_repo_{$owner}_{$repo}_contributors", 3600, function () use ($owner, $repo, $per_page, $page) {
-                $response = Http::withHeaders([
-                    'Accept' => self::APPLICATIONTYPE,
-                    'Authorization' => 'Bearer ' . $this->token,
-                    'X-GitHub-Api-Version' => self::APIVERSION,
-                ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors", [
-                    'per_page' => $per_page,
-                    'page' => $page,
-                ]);
+            if ($response->failed()) {
+                return null;
+            }
 
-                if ($response->failed()) {
-                    return null;
-                }
-
-                return $response->json();
-            });
-
-            $allContributors = array_merge($allContributors, $contributors);
-
-            $page++;
-
-        } while (count($contributors) > 0);
-
-        return $allContributors;
+            return $response->json();
+        });
     }
 
     /**

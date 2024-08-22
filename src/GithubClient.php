@@ -190,19 +190,29 @@ class GithubClient
      *
      * @param string $owner The owner of the repository
      * @param string $repo The name of the repository
+     * @param int $per_page The amount per page
+     * @param int $page The current page
      *
      */
-    public function getContributors(string $owner, string $repo): ?array
+    public function getContributors(
+        string $owner,
+        string $repo,
+        int $per_page = 25,
+        int $page = 1
+    ): ?array
     {
         $allContributors = [];
 
         do {
-            $contributors = Cache::remember("github_repo_{$owner}_{$repo}_contributors", 3600, function () use ($owner, $repo) {
+            $contributors = Cache::remember("github_repo_{$owner}_{$repo}_contributors", 3600, function () use ($owner, $repo, $per_page, $page) {
                 $response = Http::withHeaders([
                     'Accept' => self::APPLICATIONTYPE,
                     'Authorization' => 'Bearer ' . $this->token,
                     'X-GitHub-Api-Version' => self::APIVERSION,
-                ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
+                ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors", [
+                    'per_page' => $per_page,
+                    'page' => $page,
+                ]);
 
                 if ($response->failed()) {
                     return null;
@@ -215,7 +225,7 @@ class GithubClient
 
             $page++;
 
-        } while (count($contributor > 0));
+        } while (count($contributors) > 0);
 
         return $allContributors;
     }
@@ -305,7 +315,7 @@ class GithubClient
 
             $page++;
 
-        } while (count($pullRequests > 0));
+        } while (count($pullRequests) > 0);
 
         return $allPullRequests;
     }

@@ -94,7 +94,7 @@ class GithubClient
 
             $page++;
 
-        } while (count($repos) > 0);
+        } while (count($repos) === $perPage);
 
         return $allRepos;
     }
@@ -180,7 +180,7 @@ class GithubClient
 
             $page++;
 
-        } while (count($commits) > 0);
+        } while (count($commits) === $perPage);
 
         return $allCommits;
     }
@@ -190,8 +190,6 @@ class GithubClient
      *
      * @param string $owner The owner of the repository
      * @param string $repo The name of the repository
-     * @param int $per_page The amount per page
-     * @param int $page The current page
      *
      */
     public function getContributors(
@@ -256,7 +254,7 @@ class GithubClient
 
             $page++;
 
-        } while (count($issues) > 0);
+        } while (count($issues) === $perPage);
 
         return $allIssues;
     }
@@ -299,7 +297,7 @@ class GithubClient
 
             $page++;
 
-        } while (count($pullRequests) > 0);
+        } while (count($pullRequests) === $per_page);
 
         return $allPullRequests;
     }

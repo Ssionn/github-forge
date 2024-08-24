@@ -5,7 +5,6 @@ namespace Ssionn\GithubForgeLaravel;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * GitHub API Client for Laravel applications.
@@ -28,23 +27,20 @@ class GithubClient
      *
      * @param string $username The username of the GitHub user
      * @return array|null User information
-     * @throws Exception If the API request fails
      */
     public function getUser(string $username): ?array
     {
-        return Cache::remember('github_user_' . $username, 3600, function () use ($username) {
-            $response = Http::withHeaders([
-                'Accept' => self::APPLICATIONTYPE,
-                'Authorization' => 'Bearer ' . $this->token,
-                'X-GitHub-Api-Version' => self::APIVERSION,
-            ])->get("{$this->baseUrl}/users/{$username}");
+        $response = Http::withHeaders([
+            'Accept' => self::APPLICATIONTYPE,
+            'Authorization' => 'Bearer ' . $this->token,
+            'X-GitHub-Api-Version' => self::APIVERSION,
+        ])->get("{$this->baseUrl}/users/{$username}");
 
-            if ($response->failed()) {
-                return null;
-            }
+        if ($response->failed()) {
+            return null;
+        }
 
-            return $response->json();
-        });
+        return $response->json();
     }
 
     /**
@@ -56,8 +52,7 @@ class GithubClient
      * @param string $direction Direction to sort by. Either asc or desc. Default: asc when using full_name, otherwise desc
      * @param int $perPage Number of results per page. Default: 25
      * @param int $page Page number of the results to fetch. Default: 1
-     * @return Collection|null Collection of repositories
-     * @throws Exception If the API request fails
+     * @return array|null Collection of repositories
      */
     public function getRepositories(
         string $username,
@@ -70,27 +65,24 @@ class GithubClient
         $allRepos = [];
 
         do {
-            $repos = Cache::remember("github_repos_by_{$username}_{$type}_{$sort}_{$direction}_{$perPage}_{$page}", 3600, function () use ($username, $type, $sort, $direction, $perPage, $page) {
-                $response = Http::withHeaders([
-                    'Accept' => self::APPLICATIONTYPE,
-                    'Authorization' => 'Bearer ' . $this->token,
-                    'X-GitHub-Api-Version' => self::APIVERSION,
-                ])->get("{$this->baseUrl}/users/{$username}/repos", [
-                    'type' => $type,
-                    'sort' => $sort,
-                    'direction' => $direction,
-                    'per_page' => $perPage,
-                    'page' => $page,
-                ]);
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/users/{$username}/repos", [
+                'type' => $type,
+                'sort' => $sort,
+                'direction' => $direction,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-                if ($response->failed()) {
-                    return null;
-                }
+            if ($response->failed()) {
+                return null;
+            }
 
-                return $response->json();
-            });
-
-            array_merge($allRepos, $repos);
+            $repos = $response->json();
+            $allRepos = array_merge($allRepos, $repos);
 
             $page++;
 
@@ -105,23 +97,20 @@ class GithubClient
      * @param string $owner The owner of the repository
      * @param string $repo The name of the repository
      * @return array|null Repository information
-     * @throws Exception If the API request fails
      */
     public function getRepository(string $owner, string $repo): ?array
     {
-        return Cache::remember("github_repo_{$owner}_{$repo}", 3600, function () use ($owner, $repo) {
-            $response = Http::withHeaders([
-                'Accept' => self::APPLICATIONTYPE,
-                'Authorization' => 'Bearer ' . $this->token,
-                'X-GitHub-Api-Version' => self::APIVERSION,
-            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}");
+        $response = Http::withHeaders([
+            'Accept' => self::APPLICATIONTYPE,
+            'Authorization' => 'Bearer ' . $this->token,
+            'X-GitHub-Api-Version' => self::APIVERSION,
+        ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}");
 
-            if ($response->failed()) {
-                return null;
-            }
+        if ($response->failed()) {
+            return null;
+        }
 
-            return $response->json();
-        });
+        return $response->json();
     }
 
     /**
@@ -136,7 +125,7 @@ class GithubClient
      * @param string|null $until Only commits before this date will be returned. This is a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ
      * @param int $perPage Number of results per page. Default: 25
      * @param int $page Page number of the results to fetch. Default: 1
-     * @return Collection|null Collection of commits
+     * @return array Collection of commits
      */
     public function getCommitsFromRepository(
         string $owner,
@@ -152,30 +141,27 @@ class GithubClient
         $allCommits = [];
 
         do {
-            $commits = Cache::remember("github_repo_{$owner}_{$repo}_commits_{$sha}_{$path}_{$author}_{$since}_{$until}_{$perPage}_{$page}", 3600, function () use ($owner, $repo, $sha, $path, $author, $since, $until, $perPage, $page) {
-                $params = array_filter([
-                    'sha' => $sha,
-                    'path' => $path,
-                    'author' => $author,
-                    'since' => $since,
-                    'until' => $until,
-                    'per_page' => $perPage,
-                    'page' => $page,
-                ]);
+            $params = array_filter([
+                'sha' => $sha,
+                'path' => $path,
+                'author' => $author,
+                'since' => $since,
+                'until' => $until,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-                $response = Http::withHeaders([
-                    'Accept' => self::APPLICATIONTYPE,
-                    'Authorization' => 'Bearer ' . $this->token,
-                    'X-GitHub-Api-Version' => self::APIVERSION,
-                ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/commits", $params);
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/commits", $params);
 
-                if ($response->failed()) {
-                    return [];
-                }
+            if ($response->failed()) {
+                return [];
+            }
 
-                return $response->json();
-            });
-
+            $commits = $response->json();
             $allCommits = array_merge($allCommits, $commits);
 
             $page++;
@@ -186,30 +172,25 @@ class GithubClient
     }
 
     /**
-     * Get all contributors from repository
+     * Get all contributors from a repository.
      *
      * @param string $owner The owner of the repository
      * @param string $repo The name of the repository
-     *
+     * @return array|null Array of contributors
      */
-    public function getContributors(
-        string $owner,
-        string $repo,
-    ): ?array
+    public function getContributors(string $owner, string $repo): ?array
     {
-        return Cache::remember("github_repo_{$owner}_{$repo}_contributors", 3600, function () use ($owner, $repo) {
-            $response = Http::withHeaders([
-                'Accept' => self::APPLICATIONTYPE,
-                'Authorization' => 'Bearer ' . $this->token,
-                'X-GitHub-Api-Version' => self::APIVERSION,
-            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
+        $response = Http::withHeaders([
+            'Accept' => self::APPLICATIONTYPE,
+            'Authorization' => 'Bearer ' . $this->token,
+            'X-GitHub-Api-Version' => self::APIVERSION,
+        ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/contributors");
 
-            if ($response->failed()) {
-                return null;
-            }
+        if ($response->failed()) {
+            return null;
+        }
 
-            return $response->json();
-        });
+        return $response->json();
     }
 
     /**
@@ -218,9 +199,9 @@ class GithubClient
      * @param string $owner The owner of the repository
      * @param string $repo The name of the repository
      * @param string $state Indicates the state of the issues to return. Can be either open, closed, or all. Default: open
-     * @param int $per_page Number of results per page. Default: 25
+     * @param int $perPage Number of results per page. Default: 25
      * @param int $page Page number of the results to fetch. Default: 1
-     * @return Collection|null Collection of issues
+     * @return array|null Array of issues
      */
     public function getIssues(
         string $owner,
@@ -232,24 +213,21 @@ class GithubClient
         $allIssues = [];
 
         do {
-            $issues = Cache::remember("github_repo_{$owner}_{$repo}_issues_{$state}_{$perPage}_{$page}", 3600, function () use ($owner, $repo, $state, $perPage, $page) {
-                $response = Http::withHeaders([
-                    'Accept' => self::APPLICATIONTYPE,
-                    'Authorization' => 'Bearer ' . $this->token,
-                    'X-GitHub-Api-Version' => self::APIVERSION,
-                ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/issues", [
-                    'state' => $state,
-                    'per_page' => $perPage,
-                    'page' => $page,
-                ]);
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/issues", [
+                'state' => $state,
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-                if ($response->failed()) {
-                    return null;
-                }
+            if ($response->failed()) {
+                return null;
+            }
 
-                return $response->json();
-            });
-
+            $issues = $response->json();
             $allIssues = array_merge($allIssues, $issues);
 
             $page++;
@@ -260,45 +238,44 @@ class GithubClient
     }
 
     /**
-    * Get pull requests from a repository
+    * Get pull requests from a repository.
     *
     * @param string $owner The owner of the repository
     * @param string $repo The name of the repository
-    * @param int $per_page Number of results per page. Default: 25
+    * @param int $perPage Number of results per page. Default: 25
     * @param int $page Page number of the results to fetch. Default: 1
+    * @return array|null Array of pull requests
     */
     public function getPullRequests(
         string $repo,
         string $owner,
-        int $per_page = 25,
-        int $page = 1,
+        int $perPage = 25,
+        int $page = 1
     ): ?array {
         $allPullRequests = [];
 
         do {
-            $pullRequests = Cache::remember("github_pull_request_{$owner}_{$repo}", 3600, function () use ($repo, $owner, $per_page, $page) {
-                $response = Http::withHeaders([
-                    'Accept' => self::APPLICATIONTYPE,
-                    'Authorization' => 'Bearer ' . $this->token,
-                    'X-GitHub-Api-Version' => self::APIVERSION,
-                ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/pulls", [
-                    'per_page' => $per_page,
-                    'page' => $page,
-                ]);
+            $response = Http::withHeaders([
+                'Accept' => self::APPLICATIONTYPE,
+                'Authorization' => 'Bearer ' . $this->token,
+                'X-GitHub-Api-Version' => self::APIVERSION,
+            ])->get("{$this->baseUrl}/repos/{$owner}/{$repo}/pulls", [
+                'per_page' => $perPage,
+                'page' => $page,
+            ]);
 
-                if ($response->failed()) {
-                    return null;
-                }
+            if ($response->failed()) {
+                return null;
+            }
 
-                return $response->json();
-            });
-
+            $pullRequests = $response->json();
             $allPullRequests = array_merge($allPullRequests, $pullRequests);
 
             $page++;
 
-        } while (count($pullRequests) === $per_page);
+        } while (count($pullRequests) === $perPage);
 
         return $allPullRequests;
     }
 }
+

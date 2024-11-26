@@ -85,7 +85,6 @@ class GithubClient
             $allRepos = array_merge($allRepos, $repos);
 
             $page++;
-
         } while (count($repos) === $perPage);
 
         return $allRepos;
@@ -165,7 +164,6 @@ class GithubClient
             $allCommits = array_merge($allCommits, $commits);
 
             $page++;
-
         } while (count($commits) === $perPage);
 
         return $allCommits;
@@ -231,21 +229,20 @@ class GithubClient
             $allIssues = array_merge($allIssues, $issues);
 
             $page++;
-
         } while (count($issues) === $perPage);
 
         return $allIssues;
     }
 
     /**
-    * Get pull requests from a repository.
-    *
-    * @param string $owner The owner of the repository
-    * @param string $repo The name of the repository
-    * @param int $perPage Number of results per page. Default: 25
-    * @param int $page Page number of the results to fetch. Default: 1
-    * @return array|null Array of pull requests
-    */
+     * Get pull requests from a repository.
+     *
+     * @param string $owner The owner of the repository
+     * @param string $repo The name of the repository
+     * @param int $perPage Number of results per page. Default: 25
+     * @param int $page Page number of the results to fetch. Default: 1
+     * @return array|null Array of pull requests
+     */
     public function getPullRequests(
         string $repo,
         string $owner,
@@ -265,17 +262,15 @@ class GithubClient
             ]);
 
             if ($response->failed()) {
-                return null;
+                return [];
             }
 
             $pullRequests = $response->json();
             $allPullRequests = array_merge($allPullRequests, $pullRequests);
 
             $page++;
-
         } while (count($pullRequests) === $perPage);
 
         return $allPullRequests;
     }
 }
-

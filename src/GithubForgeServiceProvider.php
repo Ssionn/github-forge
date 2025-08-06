@@ -8,9 +8,7 @@ class GithubForgeServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton('github-forge', function ($app) {
-            return new GithubClient();
-        });
+        $this->app->singleton('github-forge', GithubClient::class);
     }
 
     public function boot(): void

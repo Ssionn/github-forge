@@ -18,7 +18,6 @@ trait ApiActionTrait
      */
     public function setHeaders(array $headers = []): array
     {
-        dd( $this->token);
         return [
             'Accept' => $headers['Accept'] ?? Constants::APPLICATION_TYPE,
             'Authorization' => 'Bearer ' . ($headers['Authorization'] ?? $this->token),

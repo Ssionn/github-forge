@@ -15,6 +15,11 @@ class GithubClient
 {
     use ApiActionTrait;
 
+    public function __construct()
+    {
+        $this->token = config('github-forge.token');
+    }
+
     /**
      * Get a user's profile.
      *

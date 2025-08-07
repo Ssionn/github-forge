@@ -13,11 +13,6 @@ trait ApiActionTrait
 {
     protected string $token = '';
 
-    public function __construct()
-    {
-        $this->token = config('github-forge.token');
-    }
-
     /**
      *
      * @param array<string, string> $headers

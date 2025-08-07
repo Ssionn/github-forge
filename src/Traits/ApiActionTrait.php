@@ -11,7 +11,7 @@ use Ssionn\GithubForgeLaravel\Constants\Constants;
 
 trait ApiActionTrait
 {
-    protected string $token;
+    protected string $token = '';
 
     public function __construct()
     {

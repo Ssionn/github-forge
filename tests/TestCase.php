@@ -24,6 +24,19 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Get package aliases.
+     *
+     * @param  Application  $app
+     * @return array<string, class-string>
+     */
+    protected function getPackageAliases($app): array
+    {
+        return [
+            'GithubForge' => GithubForge::class,
+        ];
+    }
+
+    /**
      * Define environment setup.
      *
      * @param  Application  $app
@@ -31,7 +44,10 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('github-forge.token', env('GITHUB_API_TOKEN'));
+        $app['config']->set(
+            'github-forge.token',
+            env('GITHUB_FORGE_TOKEN') ?? ''
+        );
 
         $app['config']->set('app.aliases', [
             'GithubForge' => GithubForge::class,

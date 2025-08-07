@@ -11,15 +11,14 @@ use Ssionn\GithubForgeLaravel\Constants\Constants;
 
 trait ApiActionTrait
 {
-    protected string $token = '';
-
     /**
      *
      * @param array<string, string> $headers
      * @return array<string, string>
      */
-    public function setHeaders(array $headers): array
+    public function setHeaders(array $headers = []): array
     {
+        dd( $this->token);
         return [
             'Accept' => $headers['Accept'] ?? Constants::APPLICATION_TYPE,
             'Authorization' => 'Bearer ' . ($headers['Authorization'] ?? $this->token),

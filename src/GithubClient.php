@@ -6,19 +6,17 @@ namespace Ssionn\GithubForgeLaravel;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Collection;
+use Ssionn\GithubForgeLaravel\Contracts\GithubClientInterface;
 use Ssionn\GithubForgeLaravel\Traits\ApiActionTrait;
 
 /**
  * GitHub API Client for Laravel applications.
  */
-class GithubClient
+class GithubClient implements GithubClientInterface
 {
     use ApiActionTrait;
 
-    public function __construct()
-    {
-        $this->token = config('github-forge.token');
-    }
+    public function __construct(protected string $token) {}
 
     /**
      * Get a user's profile.

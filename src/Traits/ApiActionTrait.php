@@ -15,7 +15,7 @@ trait ApiActionTrait
 
     public function __construct()
     {
-        $this->token = config('github_forge.token');
+        $this->token = config('github-forge.token');
     }
 
     /**

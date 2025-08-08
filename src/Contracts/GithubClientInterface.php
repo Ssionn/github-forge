@@ -2,22 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Ssionn\GithubForgeLaravel;
+namespace Ssionn\GithubForgeLaravel\Contracts;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Collection;
-use Ssionn\GithubForgeLaravel\Contracts\GithubClientInterface;
-use Ssionn\GithubForgeLaravel\Traits\ApiActionTrait;
 
-/**
- * GitHub API Client for Laravel applications.
- */
-class GithubClient implements GithubClientInterface
+interface GithubClientInterface
 {
-    use ApiActionTrait;
-
-    public function __construct(protected string $token) {}
-
     /**
      * Get a user's profile.
      *
@@ -26,17 +17,13 @@ class GithubClient implements GithubClientInterface
      * @return array|null
      * @throws ConnectionException
      */
-    public function getUser(string $username): ?array
-    {
-        return $this->getResponse("/users/{$username}");
-    }
+    public function getUser(string $username): ?array;
 
     /**
      * Get repositories for a GitHub user.
      *
      * @param string $username The username of the GitHub user.
      * @param array<string, mixed> $queryParams Optional query parameters.
-     * e.g., ['type' => 'owner', 'sort' => 'updated', 'per_page' => 50]
      *
      * @return Collection
      * @throws ConnectionException
@@ -44,12 +31,7 @@ class GithubClient implements GithubClientInterface
     public function getRepositories(
         string $username,
         array $queryParams = []
-    ): Collection {
-        return $this->getPaginatedResponse(
-            "/users/{$username}/repos",
-            $queryParams
-        );
-    }
+    ): Collection;
 
     /**
      * Get information about a specific repository.
@@ -60,10 +42,7 @@ class GithubClient implements GithubClientInterface
      * @return array|null
      * @throws ConnectionException
      */
-    public function getRepository(string $owner, string $repo): ?array
-    {
-        return $this->getResponse("/repos/{$owner}/{$repo}");
-    }
+    public function getRepository(string $owner, string $repo): ?array;
 
     /**
      * Get commits from a repository.
@@ -71,7 +50,6 @@ class GithubClient implements GithubClientInterface
      * @param string $owner The owner of the repository.
      * @param string $repo The name of the repository.
      * @param array<string, mixed> $queryParams Optional query parameters.
-     * e.g., ['sha' => 'main', 'path' => 'src/']
      *
      * @return Collection
      * @throws ConnectionException
@@ -80,12 +58,7 @@ class GithubClient implements GithubClientInterface
         string $owner,
         string $repo,
         array $queryParams = []
-    ): Collection {
-        return $this->getPaginatedResponse(
-            "/repos/{$owner}/{$repo}/commits",
-            $queryParams
-        );
-    }
+    ): Collection;
 
     /**
      * Get all contributors from a repository.
@@ -96,10 +69,7 @@ class GithubClient implements GithubClientInterface
      * @return array|null
      * @throws ConnectionException
      */
-    public function getContributors(string $owner, string $repo): ?array
-    {
-        return $this->getResponse("/repos/{$owner}/{$repo}/contributors");
-    }
+    public function getContributors(string $owner, string $repo): ?array;
 
     /**
      * Get issues from a repository.
@@ -107,7 +77,6 @@ class GithubClient implements GithubClientInterface
      * @param string $owner The owner of the repository.
      * @param string $repo The name of the repository.
      * @param array<string, mixed> $queryParams Optional query parameters.
-     * e.g., ['state' => 'closed', 'labels' => 'bug']
      *
      * @return Collection
      * @throws ConnectionException
@@ -116,12 +85,7 @@ class GithubClient implements GithubClientInterface
         string $owner,
         string $repo,
         array $queryParams = []
-    ): Collection {
-        return $this->getPaginatedResponse(
-            "/repos/{$owner}/{$repo}/issues",
-            $queryParams
-        );
-    }
+    ): Collection;
 
     /**
      * Get pull requests from a repository.
@@ -129,7 +93,6 @@ class GithubClient implements GithubClientInterface
      * @param string $owner The owner of the repository.
      * @param string $repo The name of the repository.
      * @param array<string, mixed> $queryParams Optional query parameters.
-     * e.g., ['state' => 'all', 'sort' => 'created']
      *
      * @return Collection
      * @throws ConnectionException
@@ -138,10 +101,5 @@ class GithubClient implements GithubClientInterface
         string $owner,
         string $repo,
         array $queryParams = []
-    ): Collection {
-        return $this->getPaginatedResponse(
-            "/repos/{$owner}/{$repo}/pulls",
-            $queryParams
-        );
-    }
+    ): Collection;
 }

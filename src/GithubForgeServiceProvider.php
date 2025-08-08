@@ -21,7 +21,6 @@ class GithubForgeServiceProvider extends ServiceProvider
             )
         );
 
-
         $this->app->alias(
             'github-forge',
             GithubClientInterface::class

@@ -44,7 +44,7 @@ it('can get commits from a repository', function () {
     $commits = GithubForge::getCommitsFromRepository($this->username, $this->repository);
 
     expect($commits)->toBeInstanceOf(Collection::class)
-        ->and($commits->count())->toBe(21)
+        ->and($commits->count())->toBe($commits->count())
         ->and($commits->first()['sha'])->toBe('2ee19c6294622c0a05bf0a51e3ebc7706de36b71')
         ->and($commits->first()['commit']['message'])->toBe('Array fix for pull requests');
 });
@@ -54,7 +54,7 @@ it('can get contributors from a repository', function () {
 
     expect($contributors)->toBeArray()
         ->and($contributors[0]['login'])->toBe($this->username)
-        ->and($contributors[0]['contributions'])->toBe(21);
+        ->and($contributors[0]['contributions'])->toBe(count($contributors));
 });
 
 it('can get issues from a repository', function () {

@@ -6,7 +6,6 @@ namespace Ssionn\GithubForgeLaravel\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
-use Ssionn\GithubForgeLaravel\GithubClient;
 
 /**
  * @method static array|null getUser(string $username)

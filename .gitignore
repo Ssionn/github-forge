@@ -6,4 +6,4 @@ composer.lock
 .idea/
 .env
 /phpunit.xml
-/.env.testing
+/.env

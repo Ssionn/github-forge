@@ -6,14 +6,18 @@
         "php": "^8.4",
         "illuminate/http": "*",
         "illuminate/support": "*",
-        "illuminate/pagination": "*"
+        "illuminate/pagination": "*",
+        "vlucas/phpdotenv": "^5.6"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
             "Ssionn\\GithubForgeLaravel\\": "src/",
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "helpers.php"
+        ]
     },
     "authors": [
         {
@@ -42,7 +46,8 @@
         "phpstan/phpstan": "^2.1",
         "pestphp/pest": "^3.8",
         "orchestra/testbench": "^10.4",
-        "mockery/mockery": "^1.6"
+        "mockery/mockery": "^1.6",
+        "pestphp/pest-plugin-laravel": "^3.2"
     },
     "config": {
         "allow-plugins": {

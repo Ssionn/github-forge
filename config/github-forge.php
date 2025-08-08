@@ -2,6 +2,6 @@
 
 return [
 
-    'token' => env('GITHUB_FORGE_TOKEN', ''),
+    'token' => getenv('GITHUB_FORGE_TOKEN'),
 
 ];

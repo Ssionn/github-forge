@@ -14,10 +14,7 @@
         "psr-4": {
             "Ssionn\\GithubForgeLaravel\\": "src/",
             "Tests\\": "tests/"
-        },
-        "files": [
-            "helpers.php"
-        ]
+        }
     },
     "authors": [
         {

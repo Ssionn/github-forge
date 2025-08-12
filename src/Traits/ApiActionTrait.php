@@ -12,20 +12,6 @@ use Ssionn\GithubForgeLaravel\Constants\Constants;
 trait ApiActionTrait
 {
     /**
-     *
-     * @param array<string, string> $headers
-     * @return array<string, string>
-     */
-    public function setHeaders(array $headers = []): array
-    {
-        return [
-            'Accept' => $headers['Accept'] ?? Constants::APPLICATION_TYPE,
-            'Authorization' => 'Bearer ' . ($headers['Authorization'] ?? $this->token),
-            'X-GitHub-Api-Version' => $headers['X-GitHub-Api-Version'] ?? Constants::API_VERSION,
-        ];
-    }
-
-    /**
      * Get a response from GitHub API. Base url is already provided, so you only need to provide the route and any additional headers or query parameters.
      *
      * @param string $route
@@ -77,8 +63,32 @@ trait ApiActionTrait
 
             $results = $results->merge($response);
             $page++;
-        } while (count($response) > 0);
+        } while (count($response));
 
         return $results;
+    }
+
+    /**
+     *
+     * @param array<string, string> $headers
+     * @return array<string, string>
+     */
+    public function setHeaders(array $headers = []): array
+    {
+        return [
+            'Accept' => $headers['Accept'] ?? Constants::APPLICATION_TYPE,
+            'Authorization' => 'Bearer ' . ($headers['Authorization'] ?? $this->token),
+            'X-GitHub-Api-Version' => $headers['X-GitHub-Api-Version'] ?? Constants::API_VERSION,
+        ];
+    }
+
+    /**
+     * Get the headers for the API request.
+     *
+     * @return array<string, string>
+     */
+    public function getHeaders(): array
+    {
+        return $this->setHeaders();
     }
 }

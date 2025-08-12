@@ -6,6 +6,7 @@ namespace Ssionn\GithubForgeLaravel\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
+use Ssionn\GithubForgeLaravel\Contracts\GithubClientInterface;
 
 /**
  * @method static array|null getUser(string $username)
@@ -30,6 +31,6 @@ class GithubForge extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'github-forge';
+        return GithubClientInterface::class;
     }
 }

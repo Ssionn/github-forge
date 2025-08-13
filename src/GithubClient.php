@@ -150,7 +150,7 @@ class GithubClient implements GithubClientInterface
      *
      * @return void
      */
-    protected function setToken(string $token): void
+    public function setToken(string $token): void
     {
         $this->token = $token;
     }

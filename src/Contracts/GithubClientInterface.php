@@ -102,4 +102,12 @@ interface GithubClientInterface
         string $repo,
         array $queryParams = []
     ): Collection;
+
+    /**
+     *
+     * @param string $token
+     *
+     * @returns void
+     */
+    public function setToken(string $token): void;
 }

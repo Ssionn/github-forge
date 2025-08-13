@@ -148,7 +148,9 @@ class GithubClient implements GithubClientInterface
     /**
      * Set the GitHub API token.
      *
-     * @return void
+     * @param string $token The GitHub API token.
+     *
+     * @returns void
      */
     public function setToken(string $token): void
     {

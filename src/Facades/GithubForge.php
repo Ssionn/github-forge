@@ -16,6 +16,7 @@ use Ssionn\GithubForgeLaravel\Contracts\GithubClientInterface;
  * @method static array|null getContributors(string $owner, string $repo)
  * @method static Collection getIssues(string $owner, string $repo, array $queryParams = [])
  * @method static Collection getPullRequests(string $owner, string $repo, array $queryParams = [])
+ * @method static void setToken(string $token);
  *
  * @see \Ssionn\GithubForgeLaravel\GithubClient
  */

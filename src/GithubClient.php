@@ -144,4 +144,14 @@ class GithubClient implements GithubClientInterface
             $queryParams
         );
     }
+
+    /**
+     * Set the GitHub API token.
+     *
+     * @return void
+     */
+    protected function setToken(string $token): void
+    {
+        $this->token = $token;
+    }
 }

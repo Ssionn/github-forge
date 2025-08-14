@@ -28,9 +28,11 @@ The package’s `config/github-forge.php` reads this by default.
 
 config/github-forge.php
 
-- return [
--     'token' => env('GITHUB_FORGE_TOKEN', ''),
-- ];
+```
+return [
+    'token' => env('GITHUB_FORGE_TOKEN', ''),
+];
+```
 
 Publish and override as needed.
 

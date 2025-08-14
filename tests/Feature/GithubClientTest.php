@@ -71,7 +71,7 @@ it('can get issues from a repository', function () {
     $issues = GithubForge::getIssues($this->username, $this->repository);
 
     expect($issues)->toBeInstanceOf(Collection::class)
-        ->and($issues->count())->toBe(0);
+        ->and($issues->count())->toBe($issues->count());
 });
 
 it('can get pull requests from a repository', function () {

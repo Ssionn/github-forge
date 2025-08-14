@@ -109,5 +109,5 @@ interface GithubClientInterface
      *
      * @returns void
      */
-    public function setToken(string $token): void;
+    public function withToken(string $token): GithubClientInterface;
 }

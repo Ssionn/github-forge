@@ -146,14 +146,14 @@ class GithubClient implements GithubClientInterface
     }
 
     /**
-     * Set the GitHub API token.
+     * Sets the GitHub API token.
      *
      * @param string $token The GitHub API token.
      *
-     * @returns void
+     * @returns GithubClientInterface
      */
-    public function setToken(string $token): void
+    public function withToken(string $token): GithubClientInterface
     {
-        $this->token = $token;
+        return new self($token);
     }
 }

@@ -96,9 +96,7 @@ trait ApiActionTrait
     {
         $tokenOrOverride = $headers['Authorization'] ?? $this->token;
 
-        $authHeader = str_contains($tokenOrOverride, ' ')
-            ? $this->buildAuthorizationHeader($tokenOrOverride)
-            : $tokenOrOverride;
+        $authHeader = $this->buildAuthorizationHeader($tokenOrOverride);
 
         return [
             'Accept' => $headers['Accept'] ?? Constants::APPLICATION_TYPE,

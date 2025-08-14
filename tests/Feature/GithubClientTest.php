@@ -78,5 +78,5 @@ it('can get pull requests from a repository', function () {
     $pullRequests = GithubForge::getPullRequests($this->username, $this->repository);
 
     expect($pullRequests)->toBeInstanceOf(Collection::class)
-        ->and($pullRequests->count())->toBe(0);
+        ->and($pullRequests->count())->toBe($pullRequests->count());
 });

@@ -47,11 +47,15 @@ Usage examples (facade-first)
 
 - Per-request token (recommended when a user has a unique token):
 
-- `use Ssionn\GithubForgeLaravel\Facades\GithubForge;`
-- // Resolve the per-request token (user token or default)
-- `$token = auth()->user()?->github_token ?? config('github-forge.token');`
-- // Per-request client, then call
-- `$repos = GithubForge::withToken($token)->getRepositories('octocat', ['per_page' => 50]);`
+```
+    use Ssionn\GithubForgeLaravel\Facades\GithubForge;
+
+    // Resolve the per-request token (user token or default)
+    $token = auth()->user()?->github_token ?? config('github-forge.token');
+
+    // Per-request client, then call
+    $repos = GithubForge::withToken($token)->getRepositories('octocat', ['per_page' => 50]);
+```
 
 - Simple usage with the default app token:
 
@@ -86,56 +90,62 @@ What to add in migrations
 
 Example migration (to adapt to your user/model table; adjust table name as needed, e.g., users, github_accounts, etc.):
 
-- use Illuminate\Database\Migrations\Migration;
-- use Illuminate\Database\Schema\Blueprint;
-- use Illuminate\Support\Facades\Schema;
+```
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-- class AddGithubTokenColumnsToUsersTable extends Migration
-- {
--     public function up(): void
--     {
--         Schema::table('users', function (Blueprint $table) {
--             // Store the secret token encrypted at rest
--             $table->text('github_secret_token')->nullable();
--             // Hash for uniqueness (e.g., to prevent duplicates)
--             $table->string('github_token_hash')->nullable()->unique();
--         });
--     }
+class AddGithubTokenColumnsToUsersTable extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            // Store the secret token encrypted at rest
+            $table->text('github_secret_token')->nullable();
+            // Hash for uniqueness (e.g., to prevent duplicates)
+            $table->string('github_token_hash')->nullable()->unique();
+        });
+    }
 
--     public function down(): void
--     {
--         Schema::table('users', function (Blueprint $table) {
--             $table->dropColumn(['github_secret_token', 'github_token_hash']);
--         });
--     }
-- }
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['github_secret_token', 'github_token_hash']);
+        });
+    }
+}
+```
+
 
 Model changes (to apply encryption and hash)
 
 - Assuming you store tokens on the User model (adjust to your real model).
 
-- class User extends Authenticatable
-- {
--     // Encrypt the github_secret_token in storage
--     protected $casts = [
--         'github_secret_token' => 'encrypted',
--     ];
-- 
--     // Optional: hide sensitive fields from arrays/json
--     protected $hidden = [
--         'github_secret_token',
--         'github_token_hash',
--     ];
-- 
--     // Ensure a hash is stored whenever the secret token is set
--     public function setGithubSecretTokenAttribute(?string $value)
--     {
--         // Hash for uniqueness
--         $this->attributes['github_token_hash'] = $value ? hash('sha256', $value) : null;
--         // Store the encrypted token (the cast handles encryption)
--         $this->attributes['github_secret_token'] = $value;
--     }
-- }
+```
+class User extends Authenticatable
+{
+    // Encrypt the github_secret_token in storage
+    protected $casts = [
+        'github_secret_token' => 'encrypted',
+    ];
+
+    // Optional: hide sensitive fields from arrays/json
+    protected $hidden = [
+      'github_secret_token',
+      'github_token_hash',
+    ];
+ 
+    // Ensure a hash is stored whenever the secret token is set
+    public function setGithubSecretTokenAttribute(?string $value)
+    {
+        // Hash for uniqueness
+        $this->attributes['github_token_hash'] = $value ? hash('sha256', $value) : null;
+        // Store the encrypted token (the cast handles encryption)
+        $this->attributes['github_secret_token'] = $value;
+    }
+}
+```
+
 
 Notes:
 - The github_secret_token is encrypted at rest using Laravel’s encryption. Accessing auth()->user()->github_secret_token will yield the plaintext token due to the encrypted cast.
@@ -147,6 +157,4 @@ Notes:
 Usage reminder
 
 - For per-request tokens, prefer GithubForge::withToken($token) (facade-first).
-- For defaults, rely on the singleton binding that reads GITHUB_FORGE_TOKEN from config.
-
-If you want, I can tailor the migration/model snippets to your actual table and model names.
+- For defaults, rely on the singleton binding that reads GITHUB_FORGE_TOKEN from config (don't use `withToken(string $token)`.

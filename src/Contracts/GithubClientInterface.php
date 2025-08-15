@@ -28,8 +28,21 @@ interface GithubClientInterface
      * @return Collection
      * @throws ConnectionException
      */
-    public function getRepositories(
+    public function getRepositoriesByUsername(
         string $username,
+        array $queryParams = []
+    ): Collection;
+
+    /**
+     * Get repositories for a GitHub user by token. This also returns private repositories and repositories you've contributed to.
+     *
+     * @param array<string, mixed> $queryParams Optional query parameters.
+     * e.g., ['type' => 'owner', 'sort' => 'updated', 'per_page' => 50]
+     *
+     * @return Collection
+     * @throws ConnectionException
+     */
+    public function getRepositoriesByToken(
         array $queryParams = []
     ): Collection;
 

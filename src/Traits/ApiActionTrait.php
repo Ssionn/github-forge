@@ -8,6 +8,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Ssionn\GithubForgeLaravel\Constants\Constants;
+use Ssionn\GithubForgeLaravel\Enums\TokenType;
 
 trait ApiActionTrait
 {
@@ -69,15 +70,37 @@ trait ApiActionTrait
     }
 
     /**
+     * Build the authorization header for the API request.
+     *
+     * @param string $token
+     *
+     * @return string
+     */
+    public function buildAuthorizationHeader(string $token): string
+    {
+        foreach (TokenType::cases() as $tokenType) {
+            if (str_starts_with($token, $tokenType->value)) {
+                return 'token ' . $token;
+            }
+        }
+
+        return 'Bearer ' . $token;
+    }
+
+    /**
      *
      * @param array<string, string> $headers
      * @return array<string, string>
      */
     public function setHeaders(array $headers = []): array
     {
+        $tokenOrOverride = $this->token ?? $headers['Authorization'];
+
+        $authHeader = $this->buildAuthorizationHeader($tokenOrOverride);
+
         return [
             'Accept' => $headers['Accept'] ?? Constants::APPLICATION_TYPE,
-            'Authorization' => 'Bearer ' . ($headers['Authorization'] ?? $this->token),
+            'Authorization' => $authHeader,
             'X-GitHub-Api-Version' => $headers['X-GitHub-Api-Version'] ?? Constants::API_VERSION,
         ];
     }

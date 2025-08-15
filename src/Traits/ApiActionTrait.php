@@ -94,7 +94,7 @@ trait ApiActionTrait
      */
     public function setHeaders(array $headers = []): array
     {
-        $tokenOrOverride = $headers['Authorization'] ?? $this->token;
+        $tokenOrOverride = $this->token ?? $headers['Authorization'];
 
         $authHeader = $this->buildAuthorizationHeader($tokenOrOverride);
 

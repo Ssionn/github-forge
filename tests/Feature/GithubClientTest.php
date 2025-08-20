@@ -23,7 +23,7 @@ it('can get a user profile', function () {
 });
 
 it('can get repositories for a user', function () {
-    $repositories = GithubForge::getRepositories($this->username);
+    $repositories = GithubForge::getRepositoriesByUsername($this->username);
 
     $count = 0;
 

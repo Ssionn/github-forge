@@ -16,7 +16,9 @@ class GithubClient implements GithubClientInterface
 {
     use ApiActionTrait;
 
-    public function __construct(protected string $token) {}
+    public function __construct(protected string $token)
+    {
+    }
 
     /**
      * Get a user's profile by username.

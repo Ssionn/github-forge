@@ -7,3 +7,5 @@ composer.lock
 .env
 /phpunit.xml
 /.env
+.php-cs-fixer.php
+.php-cs-fixer.cache

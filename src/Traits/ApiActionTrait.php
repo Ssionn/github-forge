@@ -49,9 +49,9 @@ trait ApiActionTrait
      * @return Collection
      * @throws ConnectionException
      */
-    public function getPaginatedResponse(string $route = '', array $queryParams = [],  array $headers = []): Collection
+    public function getPaginatedResponse(string $route = '', array $queryParams = [], array $headers = []): Collection
     {
-        $results = new Collection;
+        $results = new Collection();
         $page = 1;
 
         do {

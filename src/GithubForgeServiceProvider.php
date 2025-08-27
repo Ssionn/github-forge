@@ -16,7 +16,7 @@ class GithubForgeServiceProvider extends ServiceProvider
 
         $this->app->singleton(
             'github-forge',
-            fn($app) => new GithubClient(
+            fn ($app) => new GithubClient(
                 $app['config']->get('github-forge.token')
             )
         );

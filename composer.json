@@ -43,11 +43,17 @@
         "phpstan/phpstan": "^2.1",
         "pestphp/pest": "^3.8",
         "orchestra/testbench": "^10.4",
-        "pestphp/pest-plugin-laravel": "^3.2"
+        "pestphp/pest-plugin-laravel": "^3.2",
+        "friendsofphp/php-cs-fixer": "^3.86"
     },
     "config": {
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "cs": "vendor/bin/php-cs-fixer check",
+        "cs:fix": "vendor/bin/php-cs-fixer fix"
     }
 }
